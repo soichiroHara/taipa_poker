@@ -1,4 +1,4 @@
-import { Card } from './card';
+import { Card } from '../constants/deck';
 import { Player } from './player';
 import { PlayerAction } from './action';
 import { Spot } from './spot';
