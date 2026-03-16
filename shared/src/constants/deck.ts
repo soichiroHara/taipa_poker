@@ -1,15 +1,15 @@
 export type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
 
-export type Rank =
+export type CardNumber =
   | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
   | 'T' | 'J' | 'Q' | 'K' | 'A';
 
 export interface Card {
-  rank: Rank;
+  cardnumber: CardNumber;
   suit: Suit;
 }
 
-const RANK_NUMBERS: Rank[] = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
+const Card_NUMBERS: CardNumber[] = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
 const SUITS: Suit[] = ['spades', 'hearts', 'diamonds', 'clubs'];
 
 /**
@@ -17,5 +17,5 @@ const SUITS: Suit[] = ['spades', 'hearts', 'diamonds', 'clubs'];
  * スート順 × ランク順で並んでいる（シャッフルは使用側で行う）
  */
 export const FULL_DECK: readonly Card[] = SUITS.flatMap((suit) =>
-  RANK_NUMBERS.map((rank): Card => ({ rank, suit })),
+  Card_NUMBERS.map((cardnumber): Card => ({ cardnumber, suit })),
 );

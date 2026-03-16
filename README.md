@@ -37,7 +37,7 @@ taipa_poker/
 │   └── shared/            # フロント・バック共通型定義
 │       └── src/
 │           └── types/
-│               ├── card.ts         # Card, Suit, Rank
+│               ├── card.ts         # Card, Suit, Deck
 │               ├── player.ts       # Player, Position, Hand
 │               ├── action.ts       # PlayerAction, ActionType
 │               ├── spot.ts         # Spot, PotType
