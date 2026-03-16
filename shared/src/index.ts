@@ -4,3 +4,4 @@ export * from './types/action';
 export * from './types/spot';
 export * from './types/game';
 export * from './types/socket';
+export * from './constants/handRanges';

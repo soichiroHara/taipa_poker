@@ -4,7 +4,7 @@
   "packageManager": "npm@10.9.2",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "shared"
   ],
   "scripts": {
     "dev": "turbo run dev",

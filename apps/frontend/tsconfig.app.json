@@ -25,8 +25,8 @@
     /* Path aliases */
     "baseUrl": ".",
     "paths": {
-      "@taipa-poker/shared": ["../../packages/shared/src/index.ts"]
+      "@taipa-poker/shared": ["../../shared/src/index.ts"]
     }
   },
-  "include": ["src", "../../packages/shared/src"]
+  "include": ["src", "../../shared/src"]
 }
