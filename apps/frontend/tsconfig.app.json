@@ -20,9 +20,14 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@taipa-poker/shared": ["../../packages/shared/src/index.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/shared/src"]
 }
