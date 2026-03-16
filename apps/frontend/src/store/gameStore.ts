@@ -1,3 +1,6 @@
+// Zustandのゲーム状態管理ストア
+// フロントエンドのグローバルな状態を管理する場所。
+// Reactコンポーネントからゲームの状態（誰のターンか、ボードのカード、ポットサイズ等）を読み書きするために使います。
 import { create } from 'zustand';
 import type { GameState } from '@taipa-poker/shared';
 
