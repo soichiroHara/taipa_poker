@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { GameState } from '@taipa-poker/shared';
+import type { GameState } from '@taipa-poker/shared';
 
 interface GameStore {
   gameState: GameState | null;
