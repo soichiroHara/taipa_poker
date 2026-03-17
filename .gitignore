@@ -28,3 +28,6 @@ Thumbs.db
 # IDE
 .vscode/settings.json
 .idea
+
+# local scripts (GTOソルバーHTMLパーサー等)
+scripts/
