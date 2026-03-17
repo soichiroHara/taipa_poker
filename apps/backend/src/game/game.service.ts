@@ -1,24 +1,65 @@
 import { Injectable } from '@nestjs/common';
-import type { Card, Hand, HandRange, HandStr } from '@taipa-poker/shared';
+import type { Card } from '../../../../shared/src/constants/deck';
+import { FULL_DECK } from '../../../../shared/src/constants/deck';
+import { SrpScenario, SRP_RANGES } from '../../../../shared/src/constants/handRanges';
+import type { SrpDealResult } from '../../../../shared/src/types/socket';
+import { dealHands } from './dealHands';
+
+// シナリオ → ポジション名のマッピング
+const SCENARIO_POSITIONS: Record<SrpScenario, { originalRaiser: string; caller: string }> = {
+  UTG_vs_CO: { originalRaiser: 'UTG', caller: 'CO' },
+};
 
 @Injectable()
 export class GameService {
   /**
-   * ハンド群（レンジ）からランダムに1ハンドを選んで返す
-   * @param range 配布対象のハンド群
-   * @param usedCards 既に使用済みのカード（重複を避けるため）
+   * SRPシナリオに応じてオリジナルレイザーとコーラーのハンドをディールする。
+   *
+   * SRPにおけるcallerのアクション：
+   *   - call: callFrequency > 0 のハンドが選ばれた場合 → そのまま返す
+   *   - fold: callFrequency = 0 のハンドが選ばれた場合 → 再度ディールし直す
+   *
+   * つまり callFrequency を重みとして選択し、callするハンドが来るまでループする。
    */
-  dealHandFromRange(range: HandRange, usedCards: Card[]): Hand {
-    // TODO: 実装する
-    throw new Error('Not implemented');
+  dealSrp(scenario: SrpScenario): SrpDealResult {
+    const ranges = SRP_RANGES[scenario];
+    const positions = SCENARIO_POSITIONS[scenario];
+
+    // デッキをシャッフルしてコピー
+    const deck = [...FULL_DECK].sort(() => Math.random() - 0.5);
+
+    // オリジナルレイザーのハンドをディール（raiseFrequency を重みに使用）
+    const originalRaiserCards = dealHands(ranges.openerRange, deck, 'raise');
+
+    // コーラーは callFrequency を重みとして選択
+    // callFrequency = 0 のハンドは fold なので再抽選（dealHands内でcallFrequency=0は重み0なので選ばれない）
+    const callerCards = dealHands(ranges.callerRange, deck, 'call');
+
+    return {
+      scenario,
+      originalRaiser: {
+        position: positions.originalRaiser,
+        hand: [this.cardToStr(originalRaiserCards[0]), this.cardToStr(originalRaiserCards[1])],
+      },
+      caller: {
+        position: positions.caller,
+        hand: [this.cardToStr(callerCards[0]), this.cardToStr(callerCards[1])],
+        action: 'call',
+      },
+    };
   }
 
   /**
-   * ハンド表記（例: "AKs", "QQ", "T9o"）を Card 2枚に変換する
-   * 使用済みカードと重複する場合は null を返す
+   * カードオブジェクトを文字列表記に変換する
+   * e.g. { cardnumber: 'A', suit: 'hearts' } → 'Ah'
    */
-  private notationToHand(handStr: HandStr, usedCards: Card[]): Hand | null {
-    // TODO: 実装する
-    return null;
+  private cardToStr(card: Card): string {
+    const suitChar: Record<string, string> = {
+      spades: 's',
+      hearts: 'h',
+      diamonds: 'd',
+      clubs: 'c',
+    };
+    return `${card.cardnumber}${suitChar[card.suit]}`;
   }
 }
