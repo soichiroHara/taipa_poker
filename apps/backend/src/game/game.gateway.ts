@@ -13,6 +13,7 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from '@taipa-poker/shared';
+import { SrpScenario } from '../../../../shared/src/constants/handRanges';
 
 @WebSocketGateway({
   cors: {
@@ -34,5 +35,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  // TODO: ゲームイベントのハンドラを実装する
+  @SubscribeMessage('srp:deal')
+  handleSrpDeal(
+    @MessageBody() payload: { scenario: SrpScenario },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const result = this.gameService.dealSrp(payload.scenario);
+      client.emit('srp:dealt', result);
+    } catch (err) {
+      client.emit('srp:error', { message: String(err) });
+    }
+  }
 }
