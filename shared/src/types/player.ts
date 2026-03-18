@@ -1,4 +1,4 @@
-import { Card } from '../constants/deck';
+import type { Card } from '../constants/deck';
 
 export type Position =
   | 'UTG'

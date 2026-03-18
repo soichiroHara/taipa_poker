@@ -1,20 +1,26 @@
-import { GameState } from './game';
-import { PlayerAction } from './action';
-import { Spot } from './spot';
-import { SrpScenario } from '../constants/handRanges';
+import type { GameState } from './game';
+import type { PlayerAction } from './action';
+import type { SrpScenario } from '../constants/handRanges';
 
-// SRP ディール結果
+// SRP ディール結果（シングルプレイ用・旧）
 export interface SrpDealResult {
   scenario: SrpScenario;
   originalRaiser: {
-    position: string; // 'UTG' など
-    hand: [string, string]; // カード2枚 e.g. ['Ah', 'Kd']
+    position: string;
+    hand: [string, string];
   };
   caller: {
-    position: string; // 'HJ' / 'CO' など
+    position: string;
     hand: [string, string];
-    action: 'raise' | 'call'; // 3bet or call
+    action: 'raise' | 'call';
   };
+}
+
+// ルーム参加者への個人向けディール結果
+export interface DealResult {
+  roomId: string;
+  position: string;       // 'UTG' or 'CO'
+  hand: [string, string]; // 自分のハンドのみ
 }
 
 // クライアント → サーバー
@@ -22,8 +28,11 @@ export interface ClientToServerEvents {
   'game:join': (payload: { gameId: string; playerName: string }) => void;
   'game:action': (payload: { gameId: string; action: PlayerAction }) => void;
   'game:leave': (payload: { gameId: string }) => void;
-  'room:create': (payload: { spot: Spot; playerName: string }) => void;
-  'room:join': (payload: { roomId: string; playerName: string }) => void;
+  // ルーム（汎用）
+  'room:create': (payload: { scenario: SrpScenario }) => void;
+  'room:join': (payload: { roomId: string }) => void;
+  'room:deal': (payload: { roomId: string }) => void;
+  // SRP シングルプレイ（旧）
   'srp:deal': (payload: { scenario: SrpScenario }) => void;
 }
 
@@ -33,8 +42,13 @@ export interface ServerToClientEvents {
   'game:started': (state: GameState) => void;
   'game:finished': (state: GameState) => void;
   'game:error': (payload: { message: string }) => void;
-  'room:created': (payload: { roomId: string }) => void;
-  'room:playerJoined': (payload: { playerName: string; playerCount: number }) => void;
+  // ルーム（汎用）
+  'room:created': (payload: { roomId: string; position: 'UTG' }) => void;
+  'room:joined': (payload: { position: 'CO' }) => void;
+  'room:ready': (payload: { roomId: string }) => void;
+  'room:dealt': (result: DealResult) => void;
+  'room:error': (payload: { message: string }) => void;
+  // SRP シングルプレイ（旧）
   'srp:dealt': (result: SrpDealResult) => void;
   'srp:error': (payload: { message: string }) => void;
 }
