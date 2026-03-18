@@ -1,0 +1,20 @@
+.card {
+  display: inline-block;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 10px;
+  margin: 0 4px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  background: #fff;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.red {
+  color: #e00;
+}
+
+.black {
+  color: #000;
+}

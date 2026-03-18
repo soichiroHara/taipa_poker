@@ -1,0 +1,29 @@
+.dealt {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.position {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+}
+
+.handArea {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error {
+  color: red;
+  margin: 0;
+}

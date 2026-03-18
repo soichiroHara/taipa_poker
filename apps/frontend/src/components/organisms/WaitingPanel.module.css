@@ -1,0 +1,23 @@
+.waiting {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.msg {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 0;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: #999;
+  margin: 0;
+}
+
+.error {
+  color: red;
+  margin: 0;
+}
