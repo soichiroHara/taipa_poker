@@ -8,6 +8,7 @@ dist
 build
 .next
 out
+apps/frontend/tsconfig.app.tsbuildinfo
 
 # turbo
 .turbo
