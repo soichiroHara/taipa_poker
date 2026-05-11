@@ -1,5 +1,11 @@
 import { create } from 'zustand';
-import type { SrpDealResult, SrpScenario, DealResult } from '@taipa-poker/shared';
+import type {
+  SrpDealResult,
+  SrpScenario,
+  DealResult,
+  PlayersStatePayload,
+  PlayerSummary,
+} from '@taipa-poker/shared';
 
 // ルームの画面フェーズ
 export type RoomPhase =
@@ -24,11 +30,13 @@ interface SrpStore {
   myPosition: string | null;  // 'UTG' or 'CO'
   myHand: [string, string] | null;
   roomError: string | null;
+  players: PlayerSummary[];
   setRoomPhase: (phase: RoomPhase) => void;
   setRoomCreated: (roomId: string, position: 'UTG') => void;
   setRoomJoined: (position: 'CO') => void;
   setRoomReady: (roomId: string) => void;
   setRoomDealt: (result: DealResult) => void;
+  setRoomState: (payload: PlayersStatePayload) => void;
   setRoomError: (message: string) => void;
   resetRoom: () => void;
 }
@@ -49,6 +57,7 @@ export const useSrpStore = create<SrpStore>((set) => ({
   myPosition: null,
   myHand: null,
   roomError: null,
+  players: [],
   setRoomPhase: (roomPhase) => set({ roomPhase }),
   setRoomCreated: (roomId, position) =>
     set({ roomId, myPosition: position, roomPhase: 'waiting', roomError: null }),
@@ -58,7 +67,9 @@ export const useSrpStore = create<SrpStore>((set) => ({
     set({ roomId, roomPhase: 'ready', roomError: null }),
   setRoomDealt: (result) =>
     set({ myHand: result.hand, myPosition: result.position, roomPhase: 'dealt', roomError: null }),
+  setRoomState: ({ roomId, players }) =>
+    set({ roomId, players }),
   setRoomError: (roomError) => set({ roomError }),
   resetRoom: () =>
-    set({ roomPhase: 'lobby', roomId: null, myPosition: null, myHand: null, roomError: null }),
+    set({ roomPhase: 'lobby', roomId: null, myPosition: null, myHand: null, roomError: null, players: [] }),
 }));

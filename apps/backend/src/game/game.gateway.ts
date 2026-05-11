@@ -65,13 +65,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('room:create')
   handleRoomCreate(
-    @MessageBody() payload: { scenario: SrpScenario },
+    @MessageBody() payload: { scenario: SrpScenario, name: string},
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const { roomId, position } = this.roomService.createRoom(client.id, payload.scenario);
+      const { roomId, position, name } = this.roomService.createRoom(client.id, payload.scenario, payload.name);
       client.join(roomId);
-      client.emit('room:created', { roomId, position });
+      client.emit('room:created', { roomId, position, name });
+      this.emitRoomState(roomId)
     } catch (err) {
       client.emit('room:error', { message: String(err) });
     }
@@ -79,20 +80,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('room:join')
   handleRoomJoin(
-    @MessageBody() payload: { roomId: string },
+    @MessageBody() payload: { roomId: string, name: string },
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const joined = this.roomService.joinRoom(client.id, payload.roomId);
+      const joined = this.roomService.joinRoom(client.id, payload.roomId, payload.name);
       if (!joined) {
         client.emit('room:error', { message: 'ルームが見つからないか、すでに満員です' });
         return;
       }
       client.join(payload.roomId);
       // 参加者本人に通知
-      client.emit('room:joined', { position: joined.position });
+      client.emit('room:joined', { position: joined.position, name: joined.name });
       // ルーム全員に ready を通知
       this.server.to(payload.roomId).emit('room:ready', { roomId: payload.roomId });
+      this.emitRoomState(payload.roomId)
     } catch (err) {
       client.emit('room:error', { message: String(err) });
     }
@@ -121,5 +123,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     } catch (err) {
       client.emit('room:error', { message: String(err) });
     }
+  }
+
+  private emitRoomState(roomId: string) {
+    const room = this.roomService.getRoom(roomId);
+    if (!room) return;
+
+    const payload = {
+      roomId: room.roomId,
+      status: room.status,
+      players: room.players,
+    };
+
+    this.server.to(roomId).emit('room:state', payload);
   }
 }

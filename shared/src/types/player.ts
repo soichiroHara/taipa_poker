@@ -25,3 +25,9 @@ export interface Player {
   isFolded: boolean;
   currentBet: number;
 }
+
+export interface PlayerSummary {
+  socketId: string;
+  position: Position;
+  name: string;
+}

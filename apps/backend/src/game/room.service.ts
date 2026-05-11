@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { SrpScenario } from '../../../../shared/src/constants/handRanges';
-
-// ルーム内プレイヤー
-export interface RoomPlayer {
-  socketId: string;
-  position: 'UTG' | 'CO';
-}
+import type { PlayerSummary } from '../../../../shared/src/types/player';
 
 // ルーム
 export interface Room {
   roomId: string;
   scenario: SrpScenario;
-  players: RoomPlayer[];
+  players: PlayerSummary[];
   status: 'waiting' | 'ready';
 }
 
@@ -22,7 +17,7 @@ export class RoomService {
   /**
    * ルームを作成する。作成者はUTGポジションになる。
    */
-  createRoom(socketId: string, scenario: SrpScenario): { roomId: string; position: 'UTG' } {
+  createRoom(socketId: string, scenario: SrpScenario, name: string): { roomId: string; position: 'UTG', name: string } {
     const roomId = Array.from({ length: 5 }, () =>
       'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]
     ).join('');
@@ -30,26 +25,26 @@ export class RoomService {
     const room: Room = {
       roomId,
       scenario,
-      players: [{ socketId, position: 'UTG' }],
+      players: [{ socketId, position: 'UTG', name }],
       status: 'waiting',
     };
     this.rooms.set(roomId, room);
-    return { roomId, position: 'UTG' };
+    return { roomId, position: 'UTG', name };
   }
 
   /**
    * ルームに参加する。参加者はCOポジションになる。
    * 2人揃ったらstatus='ready'に更新する。
    */
-  joinRoom(socketId: string, roomId: string): { room: Room; position: 'CO' } | null {
+  joinRoom(socketId: string, roomId: string, name: string): { room: Room; position: 'CO', name: string } | null {
     const room = this.rooms.get(roomId);
     if (!room) return null;
     if (room.status !== 'waiting') return null;
     if (room.players.length >= 2) return null;
 
-    room.players.push({ socketId, position: 'CO' });
+    room.players.push({ socketId, position: 'CO', name });
     room.status = 'ready';
-    return { room, position: 'CO' };
+    return { room, position: 'CO', name };
   }
 
   /**
