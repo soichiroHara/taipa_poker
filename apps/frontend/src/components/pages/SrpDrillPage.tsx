@@ -11,8 +11,8 @@ import styles from './SrpDrillPage.module.css';
 export function SrpDrillPage() {
   const {
     scenario, setScenario,
-    roomPhase, roomId, myPosition, myHand, roomError,
-    setRoomCreated, setRoomJoined, setRoomReady, setRoomDealt, setRoomError, resetRoom,
+    roomPhase, roomId, myPosition, myHand, roomError, players,
+    setRoomCreated, setRoomJoined, setRoomReady, setRoomDealt, setRoomState, setRoomError, resetRoom,
   } = useSrpStore();
 
   // storeのsetterをrefで保持（useEffect依存配列から除外するため）
@@ -20,11 +20,13 @@ export function SrpDrillPage() {
   const setRoomJoinedRef = useRef(setRoomJoined);
   const setRoomReadyRef = useRef(setRoomReady);
   const setRoomDealtRef = useRef(setRoomDealt);
+  const setRoomStateRef = useRef(setRoomState);
   const setRoomErrorRef = useRef(setRoomError);
   setRoomCreatedRef.current = setRoomCreated;
   setRoomJoinedRef.current = setRoomJoined;
   setRoomReadyRef.current = setRoomReady;
   setRoomDealtRef.current = setRoomDealt;
+  setRoomStateRef.current = setRoomState;
   setRoomErrorRef.current = setRoomError;
 
   useEffect(() => {
@@ -42,6 +44,9 @@ export function SrpDrillPage() {
     socket.on('room:dealt', (result: DealResult) => {
       setRoomDealtRef.current(result);
     });
+    socket.on('room:state', (payload) => {
+      setRoomStateRef.current(payload);
+    });
     socket.on('room:error', ({ message }) => {
       setRoomErrorRef.current(message);
     });
@@ -51,6 +56,7 @@ export function SrpDrillPage() {
       socket.off('room:joined');
       socket.off('room:ready');
       socket.off('room:dealt');
+      socket.off('room:state');
       socket.off('room:error');
       socket.disconnect();
     };
@@ -58,17 +64,20 @@ export function SrpDrillPage() {
 
   const handleCreateRoom = () => {
     console.log("send room")
-    socket.emit('room:create', { scenario });
+    socket.emit('room:create', { scenario, name: 'Player 1' });
   };
 
   const handleJoinRoom = (roomId: string) => {
-    socket.emit('room:join', { roomId });
+    socket.emit('room:join', { roomId, name: 'Player 2' });
   };
 
   const handleDeal = () => {
     if (!roomId) return;
     socket.emit('room:deal', { roomId });
   };
+
+  const me = players.find((player) => player.position === myPosition) ?? null;
+  const opponent = players.find((player) => player.position !== myPosition) ?? null;
 
   return (
     <div className={styles.container}>
@@ -101,10 +110,13 @@ export function SrpDrillPage() {
         />
       )}
 
-      {roomPhase === 'dealt' && myPosition && myHand && (
+      {roomPhase === 'dealt' && myPosition && myHand && me && (
         <DealtPanel
           myPosition={myPosition}
           myHand={myHand}
+          me={me}
+          opponent={opponent}
+          players={players}
           onRedeal={handleDeal}
           onLeave={resetRoom}
           error={roomError}
