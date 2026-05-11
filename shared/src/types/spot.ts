@@ -1,4 +1,4 @@
-import { Position } from './player';
+import type { Position } from './player';
 
 // SRP = Single Raised Pot, 3BP = 3-Bet Pot, 4BP = 4-Bet Pot
 export type PotType = 'SRP' | '3BP' | '4BP';

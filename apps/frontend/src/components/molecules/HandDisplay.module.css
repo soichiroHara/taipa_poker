@@ -1,0 +1,12 @@
+.handCard {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  background: #f9f9f9;
+}
+
+.handLabel {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #555;
+}

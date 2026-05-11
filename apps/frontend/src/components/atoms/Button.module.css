@@ -1,0 +1,41 @@
+.primary {
+  padding: 10px 32px;
+  border-radius: 6px;
+  border: none;
+  background: #2ecc71;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.primary:hover:not(:disabled) {
+  background: #27ae60;
+}
+
+.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondary {
+  padding: 8px 24px;
+  border-radius: 6px;
+  border: 2px solid #ccc;
+  background: #fff;
+  color: #555;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.secondary:hover:not(:disabled) {
+  border-color: #999;
+  color: #333;
+}
+
+.secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

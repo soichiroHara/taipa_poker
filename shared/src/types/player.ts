@@ -1,4 +1,4 @@
-import { Card } from '../constants/deck';
+import type { Card } from '../constants/deck';
 
 export type Position =
   | 'UTG'
@@ -24,4 +24,10 @@ export interface Player {
   isActive: boolean;
   isFolded: boolean;
   currentBet: number;
+}
+
+export interface PlayerSummary {
+  socketId: string;
+  position: Position;
+  name: string;
 }

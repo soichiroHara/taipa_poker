@@ -1,7 +1,7 @@
-import { Card } from '../constants/deck';
-import { Player } from './player';
-import { PlayerAction } from './action';
-import { Spot } from './spot';
+import type { Card } from '../constants/deck';
+import type { Player } from './player';
+import type { PlayerAction } from './action';
+import type { Spot } from './spot';
 
 export type Street = 'flop' | 'turn' | 'river' | 'showdown';
 
