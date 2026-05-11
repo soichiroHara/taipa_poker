@@ -34,4 +34,7 @@ scripts/
 
 # local GTO range HTML files and spec docs
 *.html
+
+# my memo
 仕様.md
+memo.md
